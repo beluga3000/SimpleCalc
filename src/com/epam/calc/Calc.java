@@ -15,49 +15,52 @@ public class Calc {
 
     /**
      * Find out type of operation and return expression solving
-     * @param firstElem first element of math expression
-     * @param delim math expression delimeter
-     * @param secondElem second element of math expression
+     * @param sFirstElement first element of math expression
+     * @param delimeter math expression delimeter
+     * @param sSecondElement second element of math expression
      * @return the result of solving math expression
      */
-    public static String calc(String firstElem, String delim, String secondElem){
+    public static String calculateResult(String sFirstElement, String delimeter, String sSecondElement){
         String result = "";
-        float first = Float.valueOf(firstElem);
-        float second = Float.valueOf(secondElem);
+        float fFirstElement = Float.valueOf(sFirstElement);
+        float fSecondElement = Float.valueOf(sSecondElement);
 
-        if (delim.equals("+")){
-            result = Float.toString(first + second);
+        if (delimeter.equals("+")){
+            result = Float.toString(fFirstElement + fSecondElement);
         }
-        else if (delim.equals("-")){
-            result = Float.toString(first - second);
+        else if (delimeter.equals("-")){
+            result = Float.toString(fFirstElement - fSecondElement);
         }
-        else if (delim.equals("*")){
-            result = Float.toString(first * second);
+        else if (delimeter.equals("*")){
+            result = Float.toString(fFirstElement * fSecondElement);
         }
-        else if (delim.equals("/")){
-            result = Float.toString(first / second);
+        else if (delimeter.equals("/")){
+            result = Float.toString(fFirstElement / fSecondElement);
         }
         return result;
     }
 
     /**
      * Produces result output
-     * @param Expression math expression to solve
+     * @param expression math expression to solve
      * @throws IOException
      */
-    public static void resultOutput(String Expression)  throws IOException {
-        Pattern pattern = Pattern.compile("(\\-*\\d+\\.*\\d*)\\s*([+\\-*\\/])\\s*(\\-*\\d+\\.*\\d*)");
-        Matcher matcher = pattern.matcher(Expression);
+    public static void printResult(String expression)  throws IOException {
+        String trimmedExpression = expression.trim();
+        Pattern pattern = Pattern.compile("^(\\-*\\d+\\.*\\d*)\\s*([+\\-*\\/])\\s*(\\-*\\d+\\.*\\d*)$");
+        Matcher matcher = pattern.matcher(trimmedExpression);
         if (matcher.find()) {
             String firstElement = matcher.group(1);
             String delimeter = matcher.group(2);
             String secondElement = matcher.group(3);
-            /** For debug purposes
-             *System.out.println("First Element:\t" + firstElement);
-             *System.out.println("Delimeter:\t\t" + delimeter);
-             *System.out.println("Second Element:\t" + secondElement);
-             */
-            System.out.println("The result is:\t" + calc(firstElement, delimeter, secondElement));
+            String sResult = calculateResult(firstElement, delimeter, secondElement);
+            String resultTail = sResult.substring(sResult.indexOf('.'));
+            if (resultTail.equals(".0")){
+                Integer iResult = Integer.valueOf(sResult.substring(0, sResult.indexOf('.')));
+                System.out.println("The result is:\t" + iResult);
+            }  else {
+                System.out.println("The result is:\t" + sResult);
+            }
         } else {
             System.out.println("You've entered invalid expression. Please, try again.");
         }
@@ -80,19 +83,14 @@ public class Calc {
     }
 
     public static void main(String[] args)  throws IOException {
+        String inputString;
 
-        //exit flag
-        boolean repeat = true;
+        while(true) {
+            System.out.println("Enter math expression below or 'q' to exit:");
+            inputString  = readInput();
+            if (inputString.toLowerCase().equals("q")) break;
+            else printResult(inputString);
 
-        //Cycle user input request
-        while(repeat) {
-            System.out.println("Enter math expression below:");
-
-            resultOutput(readInput());
-
-            System.out.println("Type 'q' to exit or enter any other key to continue");
-
-            repeat = !readInput().toLowerCase().equals("q");
         }
     }
 }
